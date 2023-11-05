@@ -12,15 +12,11 @@ First, get the data
 source("DownloadDAXData.R")
 
 GDAXI <- get_dax_data()
+GDAXI <- get_log_returns(GDAXI)
 ```
 
-Clean up the data
+Density plot
 ```{r}
-GDAXI <- na.omit(GDAXI)
-log_returns <- 100 * diff(log(GDAXI$Adj))
-GDAXI <- merge(GDAXI, log_returns)
-colnames(GDAXI)[colnames(GDAXI) == "Adj.1"] <- "log_returns"
-
 plot(density(na.omit(GDAXI$log_returns)))
 ```
 

@@ -14,3 +14,13 @@ get_dax_data <- function() {
   
   return (GDAXI$Adj)
 }
+
+# This function will drop all NA-Values
+get_log_returns <- function(GDAXI) {
+  GDAXI <- na.omit(GDAXI)
+  log_returns <- 100 * diff(log(GDAXI$Adj))
+  GDAXI <- merge(GDAXI, log_returns)
+  colnames(GDAXI)[colnames(GDAXI) == "Adj.1"] <- "log_returns"
+  GDAXI <- na.omit(GDAXI)
+  return (GDAXI)
+}
