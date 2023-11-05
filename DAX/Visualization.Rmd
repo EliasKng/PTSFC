@@ -56,3 +56,8 @@ print(p)
 
 ```
 
+Plot the returns over time
+```{r}
+plot(GDAXI$log_returns, type=20)
+```
+
