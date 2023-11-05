@@ -1,4 +1,5 @@
 library(tidyquant)
+
 setwd("/Users/elias/Desktop/PTSFC/DAX/")
 
 get_dax_data <- function() {
@@ -7,5 +8,9 @@ get_dax_data <- function() {
   # Downloading Apple price using quantmod
   getSymbols("^GDAXI", from = '1987-12-30',warnings = FALSE,
               auto.assign = TRUE)
-  return (GDAXI)
+  
+  # Rename "Adjusted" Column
+  colnames(GDAXI)[colnames(GDAXI) == "GDAXI.Adjusted"] <- "Adj"
+  
+  return (GDAXI$Adj)
 }
