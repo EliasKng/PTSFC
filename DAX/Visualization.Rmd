@@ -58,6 +58,6 @@ print(p)
 
 Plot the returns over time
 ```{r}
-plot(GDAXI$log_returns, type=20)
+plot(GDAXI$log_returns, type='p', pch = 16, cex = 0.4)
 ```
 
