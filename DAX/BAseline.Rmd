@@ -31,8 +31,12 @@ GDAXI <- window(GDAXI, start=start_date)
 
 Now, lets calculate the two-step and three-step cummulative returns:
 ```{r}
+one_step_returns <- filter(GDAXI$log_returns, rep(1, 1), sides = 1)
 two_step_returns <- filter(GDAXI$log_returns, rep(1, 2), sides = 1)
 three_step_returns <- filter(GDAXI$log_returns, rep(1, 3), sides = 1)
+
+plot( density(one_step_returns))
+plot( density(two_step_returns[-1]))
 ```
 
 That works, lets generalize:
@@ -45,11 +49,8 @@ n_step_returns <- function(GDAXI, n) {
 
 Let's get the some quantiles for the two_step_returns:
 ```{r}
-one_step_returns <- GDAXI$log_returns
 two_step_returns <- n_step_returns(GDAXI, 2)
 three_step_returns <- n_step_returns(GDAXI, 3)
-
-quantile(two_step_returns)
 ```
 
 Let's visualize the densities of one to five-step returns

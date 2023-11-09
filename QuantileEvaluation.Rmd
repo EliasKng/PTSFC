@@ -1,0 +1,54 @@
+---
+title: "QuantileEvaluation"
+output: html_document
+date: "2023-11-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Quantile Evaluation 
+
+In this file, I aim to create a function that calculates the score for the given forcasted quantiles after their observation.
+
+
+```{r}
+evaluate_quantile <- function(q,tau,y) {
+  l_score <- NULL
+  if (q > y) {
+    l_score <- 2*(1-tau)*(q-y)
+  } else {
+    l_score <- 2*tau*(y-q)
+  }
+  return (l_score)
+}
+
+evaluate_horizon <- function(quantiles, y) {
+  taus <- c(0.025,0.25, 0.5, 0.75, 0.975)
+  if (length(quantiles) != 5) {
+    stop("The quantiles do not exist of five elements.")
+  }
+  sum <- 0
+  for(i in seq_along(taus)) {
+    q <- quantiles[i]
+    tau <- taus[i]
+    l_score <- evaluate_quantile(q,tau,y)
+    sum = sum + l_score
+    # print(paste("Calculate score for: ", "q = " , q, " tau = ", tau,": ", l_score))
+  }
+  return(sum)
+}
+
+```
+
+```{r}
+# evaluate_horizon(return_quantiles_df[,1],GDAXI[nrow(GDAXI), 2])
+
+for (col_name in names(return_quantiles_df)) {
+  quantiles <- return_quantiles_df[[col_name]]
+  print(as.numeric(evaluate_horizon(quantiles,GDAXI[nrow(GDAXI), 2])))
+}
+```
+
+
