@@ -1,0 +1,59 @@
+---
+title: "TestMarkdown"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-11-05"
+---
+
+## First visualizations
+First, get the data
+```{r, results = FALSE, message=FALSE}
+source("DownloadDAXData.R")
+
+GDAXI <- get_dax_data()
+GDAXI <- get_log_returns(GDAXI)
+```
+
+Density plot
+```{r}
+plot(density(na.omit(GDAXI$log_returns)))
+```
+
+Compare the densities of the log_returns to a normal distribution and a $t_6$ dist.
+```{r}
+# Load necessary library
+library(ggplot2)
+
+# Remove NA values for density computation
+log_returns <- na.omit(GDAXI$log_returns)
+
+# Basic density plot of log returns
+density_log_returns <- density(log_returns)
+
+# Generate values for the normal distribution
+x_vals <- density_log_returns$x
+normal_density <- dnorm(x_vals, mean = mean(log_returns), sd = sd(log_returns))
+
+# Generate values for the t-distribution with 6 degrees of freedom
+t_density <- dt(x_vals, df = 6)
+
+# Create the base density plot using ggplot2
+p <- ggplot() +
+  geom_line(aes(x = density_log_returns$x, y = density_log_returns$y), color = 'blue') +
+  geom_line(aes(x = x_vals, y = normal_density), color = 'red', linetype = "dashed") +
+  geom_line(aes(x = x_vals, y = t_density), color = 'green', linetype = "dotted") +
+  labs(x = 'Log Returns', y = 'Density',
+       title = 'Density of Log Returns with Normal and t Distributions') +
+  theme_minimal()
+
+# Print the plot
+print(p)
+
+```
+
+Plot the returns over time
+```{r}
+plot(GDAXI$log_returns, type='p', pch = 16, cex = 0.4)
+```
+

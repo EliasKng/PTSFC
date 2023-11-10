@@ -1,0 +1,116 @@
+---
+title: "Baseline"
+output: html_document
+date: "2023-11-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Here I will implement the given baseline model
+```{r}
+source("DownloadDAXData.R")
+GDAXI <- get_dax_data()
+GDAXI <- get_log_returns(GDAXI)
+
+
+
+
+# end_date <- as.Date("2023-11-03")
+# Truncate the xts object starting from the specified date
+# GDAXI <- window(GDAXI, start=start_date)
+
+start_date <- as.Date("2023-05-03")
+GDAXI <- window(GDAXI, start=start_date)
+
+
+# Alternative: select the most recent X observations
+# GDAXI <- tail(GDAXI, 350)
+```
+
+Now, lets calculate the two-step and three-step cummulative returns:
+```{r}
+one_step_returns <- filter(GDAXI$log_returns, rep(1, 1), sides = 1)
+two_step_returns <- filter(GDAXI$log_returns, rep(1, 2), sides = 1)
+three_step_returns <- filter(GDAXI$log_returns, rep(1, 3), sides = 1)
+
+plot( density(one_step_returns))
+plot( density(two_step_returns[-1]))
+```
+
+That works, lets generalize:
+```{r}
+n_step_returns <- function(GDAXI, n) {
+  n_step_rets <- filter(GDAXI$log_returns, rep(1, n), sides = 1)
+  return (na.omit(n_step_rets))
+}
+```
+
+Let's get the some quantiles for the two_step_returns:
+```{r}
+two_step_returns <- n_step_returns(GDAXI, 2)
+three_step_returns <- n_step_returns(GDAXI, 3)
+```
+
+Let's visualize the densities of one to five-step returns
+```{r}
+# Assuming n_step_returns is a function that correctly calculates n-step returns
+one_step_returns <- n_step_returns(GDAXI, 1)
+two_step_returns <- n_step_returns(GDAXI, 2)
+three_step_returns <- n_step_returns(GDAXI, 3)
+four_step_returns <- n_step_returns(GDAXI, 4)
+five_step_returns <- n_step_returns(GDAXI, 5)
+
+# Combine all returns to set the limits
+all_returns <- c(one_step_returns, two_step_returns, three_step_returns, four_step_returns, five_step_returns)
+
+# Plot the density of one-step returns
+plot(density(one_step_returns), main="Density of One- to Five-Step Returns",
+     xlab="Returns", ylab="Density", xlim=range(all_returns, na.rm = TRUE), col="red")
+
+# Overlay the density of the other step returns
+lines(density(two_step_returns), col="blue")
+lines(density(three_step_returns), col="green")
+lines(density(four_step_returns), col="orange")
+lines(density(five_step_returns), col="purple")
+
+# Add a legend to differentiate the densities
+legend("topright", 
+       legend=c("One-Step", "Two-Step", "Three-Step", "Four-Step", "Five-Step"), 
+       col=c("red", "blue", "green", "orange", "purple"), 
+       lwd=1, 
+       bty="n",
+       cex=0.8)
+
+```
+We can see, that as expected, the variance increases for increazing horizon.
+
+Now let's calculate the quantiles:
+```{r}
+# Define the quantiles you are interested in
+quantiles <- c(0.025, 0.25, 0.5, 0.75, 0.975)
+
+# Calculate the quantiles for each n-step return
+one_step_quantiles <- quantile(na.omit(one_step_returns), quantiles)
+two_step_quantiles <- quantile(na.omit(two_step_returns), quantiles)
+three_step_quantiles <- quantile(na.omit(three_step_returns), quantiles)
+four_step_quantiles <- quantile(na.omit(four_step_returns), quantiles)
+five_step_quantiles <- quantile(na.omit(five_step_returns), quantiles)
+
+# Combine the quantiles into a data frame
+return_quantiles_df <- data.frame(
+  'One-Step' = one_step_quantiles,
+  'Two-Step' = two_step_quantiles,
+  'Three-Step' = three_step_quantiles,
+  'Four-Step' = four_step_quantiles,
+  'Five-Step' = five_step_quantiles
+)
+
+# Rename the rows to reflect the quantile levels
+rownames(return_quantiles_df) <- c("2.5%", "25%", "50%", "75%", "97.5%")
+
+# Print the data frame
+print(return_quantiles_df)
+```
+
