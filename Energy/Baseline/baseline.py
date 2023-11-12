@@ -8,7 +8,6 @@ import seaborn as sns
 # Expected a prepared df (date, gesamt). Calculates the baseline-predictions for the next [36, 40, 44, 60, 64, 68]h
 # Offtest the data by LAST_IDX
 def baseline(df, LAST_IDX=-1):
-    print("A")
     horizons_def = [36, 40, 44, 60, 64, 68]  # [24 + 12*i for i in range(5)]
     horizons = [h + 1 for h in horizons_def]
     LAST_DATE = df.iloc[LAST_IDX].name
