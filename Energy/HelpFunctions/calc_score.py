@@ -20,8 +20,6 @@ def evaluate_horizon(quantiles, y):
     for q, tau in zip(quantiles, taus):
         l_score = evaluate_quantile(q, tau, y)
         total_sum += l_score
-        print(f"Calculate score for: q = {q}, tau = {tau}: {l_score}")
+        # print(f"Calculate score for: q = {q}, tau = {tau}: {l_score}")
 
     return total_sum
-
-print(evaluate_horizon([32, 35, 37, 41, 47], 42))
