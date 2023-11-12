@@ -42,5 +42,4 @@ def prepare_data(df):
     df = df.rename(columns={"Netzlast_Gesamt": "gesamt"})
     df['gesamt'] = df['gesamt'] / 1000
     df["weekday"] = df.index.weekday  # Monday=0, Sunday=6
-    print("A")
     return df
