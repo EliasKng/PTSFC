@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import pandas as pd
 
+
 def most_recent_thursday(df):
     today = df.index.max()
     days_to_thursday = (today.weekday() - 3) % 7  # Calculate days to the most recent Thursday
