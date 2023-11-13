@@ -11,6 +11,8 @@ from Energy.HelpFunctions.get_energy_data import get_energy_data, prepare_data
 
 
 def model1(energyconsumption):
+    energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
+
     # Prepare df (add dummies)
     energyconsumption['weekday'] = energyconsumption.index.weekday
     energyconsumption['hour'] = energyconsumption.index.hour
@@ -45,7 +47,6 @@ def model1(energyconsumption):
     # add constant for the intercept term
     X_ec = sm.add_constant(X_ec)
 
-    X_ec
     # fit seasonal linear regression model
     model = sm.OLS(y_ec, X_ec).fit()
     model.summary()
@@ -77,16 +78,12 @@ def model1(energyconsumption):
     energy_forecast['weekend_day'] = energy_forecast['weekday'].apply(
         lambda x: 1 if x in [5, 6] else 0)
 
-    energy_forecast
-
     # Point forecasts
     X_fc = energy_forecast.drop(columns=['weekday', 'hour', 'month', 'low_consumption_time'])
     X_fc = sm.add_constant(X_fc, has_constant='add')
-    X_fc
 
     # Make predictions
     predictions_ec = model.predict(X_fc)
-    predictions_ec
 
     # Quantile Regression
     quantiles = [0.025, 0.25, 0.5, 0.75, 0.975]
@@ -100,7 +97,7 @@ def model1(energyconsumption):
         forecast_temp = model_temp.predict(X_fc)
 
         # Add the forecasts to the energy_forecast DataFrame with a label like 'forecast025'
-        energy_forecast[f'forecast{q}'] = forecast_temp
+        energy_forecast[f'q{q}'] = forecast_temp
 
     # Format Results
     # Define the specific date and time combinations
@@ -110,8 +107,7 @@ def model1(energyconsumption):
     indexes = [28, 32, 36, 52, 56, 60]
 
     forecasting_results = energy_forecast.iloc[indexes,
-                          energy_forecast.columns.get_loc('forecast0.025'):energy_forecast.columns.get_loc(
-                              'forecast0.975') + 1]
+                          energy_forecast.columns.get_loc('q0.025'):energy_forecast.columns.get_loc('q0.975') + 1]
 
     forecasting_results = forecasting_results.reset_index(drop=False)
     forecasting_results = forecasting_results.rename(columns={"date_time": "forecast_date"})
