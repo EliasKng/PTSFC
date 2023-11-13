@@ -104,12 +104,14 @@ def model1(energyconsumption):
     # selected_dates = ['2023-11-14 12:00:00', '2023-11-14 16:00:00', '2023-11-14 20:00:00',
     #                   '2023-11-15 12:00:00', '2023-11-15 16:00:00', '2023-11-15 20:00:00']
 
-    indexes = [28, 32, 36, 52, 56, 60]
+    indexes = [36, 40, 44, 60, 64, 68]
 
     forecasting_results = energy_forecast.iloc[indexes,
                           energy_forecast.columns.get_loc('q0.025'):energy_forecast.columns.get_loc('q0.975') + 1]
 
     forecasting_results = forecasting_results.reset_index(drop=False)
     forecasting_results = forecasting_results.rename(columns={"date_time": "forecast_date"})
+    forecasting_results['horizon'] = ['36h', '40h', '44h', '60h', '64h', '68h']
+    forecasting_results['target'] = ["energy" for _ in range(6)]
 
     return forecasting_results
