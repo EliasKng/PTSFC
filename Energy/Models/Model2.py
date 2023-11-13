@@ -35,8 +35,6 @@ def model2(df):
     # drop unneccesary columns
     df = df.drop(columns=['weekday', 'hour', 'month'])
 
-    print(df.columns)
-
     # Fit model*****
     y_ec = df['energy_consumption']
     X_ec = df.drop(
