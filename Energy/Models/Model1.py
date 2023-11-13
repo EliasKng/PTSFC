@@ -111,7 +111,7 @@ def model1(energyconsumption):
 
     forecasting_results = forecasting_results.reset_index(drop=False)
     forecasting_results = forecasting_results.rename(columns={"date_time": "forecast_date"})
-    forecasting_results['horizon'] = ['36h', '40h', '44h', '60h', '64h', '68h']
+    forecasting_results['horizon'] = ['36 hour', '40 hour', '44 hour', '60 hour', '64 hour', '68 hour']
     forecasting_results['target'] = ["energy" for _ in range(6)]
 
     return forecasting_results
