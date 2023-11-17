@@ -4,8 +4,8 @@
 # will be printed.
 # in case of problems email johannes.bracher@kit.edu
 
-setwd("/Users/elias/Desktop/PTSFC/")
-dat <- read.csv("Abgabe_1.csv", stringsAsFactors = FALSE)
+setwd("/Users/elias/Desktop/PTSFC/Abgaben")
+dat <- read.csv("2023-11-15_CharlesBoyle.csv", stringsAsFactors = FALSE)
 
 col_names <- colnames(dat)
 expected_colnames <- c("forecast_date", "target", "horizon", "q0.025", "q0.25", "q0.5", "q0.75", "q0.975")
