@@ -1,7 +1,6 @@
 import pandas as pd
 import statsmodels.api as sm
-from Energy.HelpFunctions.get_energy_data import get_energy_data, prepare_data
-from Energy.HelpFunctions.date_and_time import most_recent_thursday
+
 
 def model2(df):
     df = df.rename(columns={"gesamt": "energy_consumption"})
