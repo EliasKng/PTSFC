@@ -1,8 +1,4 @@
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-from datetime import timedelta, datetime
-import seaborn as sns
 import yfinance as yf
 
 
@@ -11,6 +7,8 @@ def get_dax_data():
     hist = msft.history(period="max")
     for i in range(5):
         hist["ret" + str(i + 1)] = compute_return(hist["Close"].values, h=i + 1)
+    hist = hist.drop(columns=['Open','High','Low','Volume','Dividends','Stock Splits'])
+    
     return hist
 
 
