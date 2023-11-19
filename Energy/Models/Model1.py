@@ -1,13 +1,5 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import statsmodels.api as sm
-import sklearn
-from math import sqrt
-
-from Energy.HelpFunctions import import_csv_data
-from Energy.HelpFunctions.get_energy_data import get_energy_data, prepare_data
 
 
 def model1(energyconsumption):
@@ -15,7 +7,11 @@ def model1(energyconsumption):
 
     energyconsumption = add_dummies(energyconsumption)
 
-    model, y_ec, X_ec = fit_model(energyconsumption)
+    y_ec = energyconsumption['energy_consumption']
+    X_ec = energyconsumption.drop(
+        columns=['energy_consumption', 'low_consumption_time'])  # low consumption time as reference time --> drop
+    # add constant for the intercept term
+    X_ec = sm.add_constant(X_ec)
 
     # Calculate Forecasts
     # create new dataframe containing future date_times and indepentent variables
@@ -32,9 +28,6 @@ def model1(energyconsumption):
     # Point forecasts
     X_fc = energy_forecast.drop(columns=['low_consumption_time'])
     X_fc = sm.add_constant(X_fc, has_constant='add')
-
-    # Make predictions
-    predictions_ec = model.predict(X_fc)
 
     # Quantile Regression
     quantiles = [0.025, 0.25, 0.5, 0.75, 0.975]
@@ -90,16 +83,3 @@ def add_dummies(df):
     # drop unneccesary columns
     df = df.drop(columns=['weekday', 'hour', 'month'])
     return df
-
-def fit_model(df):
-    # Fit model*****
-    y_ec = df['energy_consumption']
-    X_ec = df.drop(
-        columns=['energy_consumption', 'low_consumption_time'])  # low consumption time as reference time --> drop
-
-    # add constant for the intercept term
-    X_ec = sm.add_constant(X_ec)
-
-    # fit seasonal linear regression model
-    model = sm.OLS(y_ec, X_ec).fit()
-    return model, y_ec, X_ec
