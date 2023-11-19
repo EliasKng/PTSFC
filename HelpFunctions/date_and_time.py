@@ -22,3 +22,28 @@ def split_time(df, num_years=0, num_months=0, num_weeks=0, num_days=0, num_hours
     df_a = df.loc[df.index > split_date]
 
     return df_b, df_a
+
+
+def next_working_days(start_date, num_days=5):
+    """
+    Get the next N working days excluding weekends.
+
+    Parameters:
+    - start_date: The starting date in 'YYYY-MM-DD' format.
+    - num_days: Number of working days to retrieve (default is 5).
+
+    Returns:
+    - A list of the next N working days.
+    """
+    start_date = pd.to_datetime(start_date)
+    working_days = []
+
+    while len(working_days) < num_days:
+        # Increment the date by one day
+        start_date += pd.Timedelta(days=1)
+
+        # Check if the day is a weekday (Monday to Friday)
+        if start_date.weekday() < 5:
+            working_days.append(start_date.strftime('%Y-%m-%d'))
+
+    return working_days
