@@ -1,8 +1,8 @@
 import pandas as pd
 from arch import arch_model
-from HelpFunctions.date_and_time import next_working_days
 from scipy.stats import norm
 import math
+from HelpFunctions.date_and_time import next_working_days
 
 
 # Runs GARCH(1,1) for each horizon
@@ -11,10 +11,12 @@ def garch11(df):
     quantiles = [get_norm_quantiles(v) for v in variances]
     column_names = [f'q{q}' for q in [0.025 ,0.25 ,0.5 ,0.75 ,0.975]]
     dates = next_working_days(max(df.index).date(), 5)
+    horizon_column = [f'{h} day' for h in [1,2,5,6,7]]
 
     quantile_df = pd.DataFrame(quantiles, columns=column_names)
     quantile_df['forecast_date'] = dates
-    quantile_df.set_index('forecast_date', inplace=True)
+    quantile_df['horizon'] = horizon_column
+    # quantile_df.set_index('forecast_date', inplace=True)
     return quantile_df
 
 
