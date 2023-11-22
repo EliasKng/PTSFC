@@ -1,3 +1,6 @@
+import pickle
+from datetime import datetime, timedelta
+
 import requests
 from tqdm import tqdm
 import pandas as pd
@@ -5,6 +8,25 @@ from datetime import datetime
 
 
 def get_energy_data():
+    with open('current_energy_data.pkl', 'rb') as f:
+        energydata = pickle.load(f)
+
+    if max(energydata.index) + timedelta(hours=5) < datetime.now():
+        raise ValueError("The data is not up to date anymore. Please call fetch_energy_data")
+
+    return energydata
+
+
+def prepare_data(df):
+    if df.isna().any().any():
+        raise Exception("DF contains NAs! Please check")
+    df = df.rename(columns={"Netzlast_Gesamt": "gesamt"})
+    df['gesamt'] = df['gesamt'] / 1000
+    df["weekday"] = df.index.weekday  # Monday=0, Sunday=6
+    return df
+
+
+def fetch_energy_data():
     # get all available time stamps
     stampsurl = "https://www.smard.de/app/chart_data/410/DE/index_quarterhour.json"
     response = requests.get(stampsurl)
@@ -33,13 +55,7 @@ def get_energy_data():
     # resample
     energydata = energydata.resample("1h", label="left").sum()
 
-    return energydata
+    energydata.to_csv('current_data.csv', index=True)
 
-
-def prepare_data(df):
-    if df.isna().any().any():
-        raise Exception("DF contains NAs! Please check")
-    df = df.rename(columns={"Netzlast_Gesamt": "gesamt"})
-    df['gesamt'] = df['gesamt'] / 1000
-    df["weekday"] = df.index.weekday  # Monday=0, Sunday=6
-    return df
+    with open('current_energy_data.pkl', 'wb') as f:
+        pickle.dump(energydata, f)
