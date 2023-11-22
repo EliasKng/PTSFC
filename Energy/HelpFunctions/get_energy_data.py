@@ -8,10 +8,10 @@ from datetime import datetime
 
 
 def get_energy_data():
-    with open('current_energy_data.pkl', 'rb') as f:
+    with open('/Users/elias/Desktop/PTSFC/Energy/current_energy_data.pkl', 'rb') as f:
         energydata = pickle.load(f)
 
-    if max(energydata.index) + timedelta(hours=5) < datetime.now():
+    if max(energydata.index) + timedelta(hours=7) < datetime.now():
         raise ValueError("The data is not up to date anymore. Please call fetch_energy_data")
 
     return energydata
