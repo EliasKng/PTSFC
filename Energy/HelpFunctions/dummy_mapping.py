@@ -1,3 +1,4 @@
+import holidays
 import pandas as pd
 import numpy as np
 
@@ -66,4 +67,14 @@ def get_consumption_time_mapping(df):
     # Drop Low consumption time, because knowledge about the other two accounts for that
     df = df.drop(columns=['hour', 'low_consumption_time'])
 
+    return df
+
+
+def get_holiday_dummy(df):
+    df['timestamp'] = df.index
+
+    holidays_de = holidays.DE()
+    df['holiday'] = df['timestamp'].apply(
+        lambda x: 1 if x in holidays_de else 0)
+    df = df.drop(columns=['timestamp'])
     return df
