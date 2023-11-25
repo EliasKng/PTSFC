@@ -2,7 +2,7 @@ import pandas as pd
 import statsmodels.api as sm
 
 from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_consumption_time_mapping, get_day_mapping, \
-    get_holiday_dummy
+    get_holiday_dummy, get_population
 
 
 def model4(energyconsumption):
@@ -65,5 +65,6 @@ def add_dummies(df):
     df = get_consumption_time_mapping(df)
     df = get_day_mapping(df)
     df = get_holiday_dummy(df)
+    df = get_population(df)
 
     return df

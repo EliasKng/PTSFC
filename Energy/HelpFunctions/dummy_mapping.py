@@ -78,3 +78,20 @@ def get_holiday_dummy(df):
         lambda x: 1 if x in holidays_de else 0)
     df = df.drop(columns=['timestamp'])
     return df
+
+
+def get_population(df):
+    df['year'] = df.index.year
+
+    population_mapping = {
+        2017: 82.792,
+        2018: 83.019,
+        2019: 83.167,
+        2020: 83.155,
+        2021: 83.237,
+        2022: 84.359,
+        2023: 84.581
+    }
+    df['population'] = df['year'].map(population_mapping)
+    df = df.drop(columns=['year'])
+    return df
