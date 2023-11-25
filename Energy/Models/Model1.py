@@ -1,6 +1,8 @@
 import pandas as pd
 import statsmodels.api as sm
 
+from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_consumption_time_mapping, get_day_mapping
+
 
 def model1(energyconsumption):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
@@ -9,7 +11,7 @@ def model1(energyconsumption):
 
     y_ec = energyconsumption['energy_consumption']
     X_ec = energyconsumption.drop(
-        columns=['energy_consumption', 'low_consumption_time'])  # low consumption time as reference time --> drop
+        columns=['energy_consumption'])
     # add constant for the intercept term
     X_ec = sm.add_constant(X_ec)
 
@@ -26,7 +28,7 @@ def model1(energyconsumption):
     energy_forecast = add_dummies(energy_forecast)
 
     # Point forecasts
-    X_fc = energy_forecast.drop(columns=['low_consumption_time'])
+    X_fc = energy_forecast
     X_fc = sm.add_constant(X_fc, has_constant='add')
 
     # Quantile Regression
@@ -57,29 +59,8 @@ def model1(energyconsumption):
 
 
 def add_dummies(df):
-    # Prepare df (add dummies)
-    df['weekday'] = df.index.weekday
-    df['hour'] = df.index.hour
-    df['month'] = df.index.month
+    df = get_winter_dummy(df)
+    df = get_consumption_time_mapping(df)
+    df = get_day_mapping(df)
 
-    # create winter/cold dummy variable
-    df['winter'] = df['month'].apply(
-        lambda x: 1 if x in [10, 11, 12, 1, 2, 3] else 0)
-
-    # Define mapping of hours to timeframes (based on graph) and create dummy variable
-    time_mapping = {
-        'low_consumption_time': list(range(7)),  # differs a lot weekend/weekday
-        'high_consumption_time': list(range(7, 20)),
-        'transition_time': [6, 20, 21, 22, 23]}
-
-    for timeframe, hours in time_mapping.items():
-        df[timeframe] = df['hour'].apply(
-            lambda x: 1 if x in hours else 0)
-
-    # create weekend day dummy variable
-    df['weekend_day'] = df['weekday'].apply(
-        lambda x: 1 if x in [5, 6] else 0)
-
-    # drop unneccesary columns
-    df = df.drop(columns=['weekday', 'hour', 'month'])
     return df

@@ -51,6 +51,7 @@ def get_winter_dummy(df):
     df['winter'] = df['month'].apply(
         lambda x: 1 if x in [10, 11, 12, 1, 2, 3] else 0)
     df = df.drop(columns=['month'])
+    return df
 
 
 def get_consumption_time_mapping(df):
