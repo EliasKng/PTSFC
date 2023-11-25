@@ -40,7 +40,6 @@ def model4(energyconsumption):
 
     for q in quantiles:
         model_temp = model_qr.fit(q=q)
-        print(X_fc)
 
         # Calculate forecasts for X_fc using the fitted model for the current quantile
         forecast_temp = model_temp.predict(X_fc)
