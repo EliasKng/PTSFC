@@ -37,6 +37,8 @@ def model4(energyconsumption):
     quantiles = [0.025, 0.25, 0.5, 0.75, 0.975]
 
     model_qr = sm.QuantReg(y_ec, X_ec)
+    # fit = model_qr.fit(q=0.5)
+    # print(fit.summary())
 
     for q in quantiles:
         model_temp = model_qr.fit(q=q)
