@@ -55,7 +55,5 @@ def fetch_energy_data():
     # resample
     energydata = energydata.resample("1h", label="left").sum()
 
-    energydata.to_csv('current_data.csv', index=True)
-
     with open('current_energy_data.pkl', 'wb') as f:
         pickle.dump(energydata, f)
