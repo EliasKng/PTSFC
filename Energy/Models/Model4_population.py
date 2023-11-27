@@ -6,7 +6,7 @@ from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_day_mapping
     get_consumption_time_mapping_4_ways
 
 
-def model4(energyconsumption):
+def model4_population(energyconsumption):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
 
     energyconsumption = add_dummies(energyconsumption)
@@ -68,6 +68,6 @@ def add_dummies(df):
     df = get_consumption_time_mapping_4_ways(df)
     df = get_day_mapping(df)
     df = get_holiday_dummy(df)
-    # df = get_population(df)
+    df = get_population(df)
 
     return df
