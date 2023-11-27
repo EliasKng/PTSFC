@@ -2,7 +2,7 @@ import holidays
 import pandas as pd
 import numpy as np
 
-from Energy.HelpFunctions.sun_hours import calculate_sun_hours
+from Energy.HelpFunctions.sun_hours import SunHoursCalculator
 
 
 def get_season_mapping(data_df):
@@ -136,5 +136,5 @@ def get_2022_mapping(df):
 
 
 def get_sun_hours(df):
-    df['sun_hours'] = [calculate_sun_hours(date.strftime('%Y-%m-%d')) for date in df.index]
+    df['sun_hours'] = [SunHoursCalculator.calculate_sun_hours(date.strftime('%Y-%m-%d')) for date in df.index]
     return df
