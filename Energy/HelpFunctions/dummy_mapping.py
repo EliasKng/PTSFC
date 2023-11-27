@@ -4,7 +4,6 @@ import numpy as np
 
 
 def get_season_mapping(data_df):
-
     data_df.loc[:, 'month'] = data_df.index.month
 
     # define the mapping of months to seasons
@@ -34,17 +33,17 @@ def get_day_mapping(df):
     df['weekend_day'] = df['weekday'].apply(
         lambda x: 1 if x in [5, 6] else 0)
     df = df.drop(columns=['weekday'])
-    return (df)
+    return df
 
 
-def get_hour_mapping(data_df):
-
-    data_df.loc[:, 'hour'] = data_df.index.hour
-
-    data_df = pd.get_dummies(
-        data_df, columns=['hour'], prefix=['hour'], dtype=int)
-
-    return (data_df)
+def get_day_mapping_detailed(df):
+    df['weekday'] = df.index.weekday
+    df['sturday'] = df['weekday'].apply(
+        lambda x: 1 if x == 5 else 0)
+    df['sunday'] = df['weekday'].apply(
+        lambda x: 1 if x == 6 else 0)
+    df = df.drop(columns=['weekday'])
+    return df
 
 
 def get_winter_dummy(df):
@@ -67,6 +66,65 @@ def get_consumption_time_mapping(df):
     # Drop Low consumption time, because knowledge about the other two accounts for that
     df = df.drop(columns=['hour', 'low_consumption_time'])
 
+    return df
+
+
+def get_consumption_time_mapping_2(df):
+    df['hour'] = df.index.hour
+    time_mapping = {
+        'noon_consumption': [9, 10, 11, 12, 13],
+        'after_noon_consumption': [14, 15, 16, 17],
+        'evening_consumption': [18, 19, 20],
+        # 'night_consumption': [21,22,23,0,1,2,3,4,5,6,7,8]
+    }
+    for timeframe, hours in time_mapping.items():
+        df[timeframe] = df['hour'].apply(
+            lambda x: 1 if x in hours else 0)
+    # Drop Low consumption time, because knowledge about the other two accounts for that
+    df = df.drop(columns=['hour'])
+
+    return df
+
+
+def get_consumption_time_mapping_3(df):
+    df['hour'] = df.index.hour
+    time_mapping = {
+        'low_consumption_time': list(range(6)),  # differs a lot weekend/weekday
+        'high_consumption_time': list(range(8, 20)),
+        'transition_time': [6, 7, 20, 21, 22, 23]}
+    for timeframe, hours in time_mapping.items():
+        df[timeframe] = df['hour'].apply(
+            lambda x: 1 if x in hours else 0)
+    # Drop Low consumption time, because knowledge about the other two accounts for that
+    df = df.drop(columns=['hour', 'low_consumption_time'])
+
+    return df
+
+
+def get_consumption_time_mapping_4(df):
+    df['hour'] = df.index.hour
+    time_mapping = {
+        'low_consumption_time': list(range(6)),  # differs a lot weekend/weekday
+        'high_consumption_time': list(range(7, 15)),
+        'medium_high_consumption_time': [14, 15, 16, 17, 18],
+        'transition_time': [6, 20, 21, 22, 23]}
+    for timeframe, hours in time_mapping.items():
+        df[timeframe] = df['hour'].apply(
+            lambda x: 1 if x in hours else 0)
+    # Drop Low consumption time, because knowledge about the other two accounts for that
+    df = df.drop(columns=['hour', 'low_consumption_time'])
+
+    return df
+
+
+def get_hour_mapping(df):
+    df['hour'] = df.index.hour
+
+    for hour in range(24):
+        df[f'hour: {hour}'] = df['hour'].apply(
+            lambda x: 1 if x == hour else 0
+        )
+    df = df.drop(columns=['hour'])
     return df
 
 
@@ -93,5 +151,16 @@ def get_population(df):
         2023: 84.581
     }
     df['population'] = df['year'].map(population_mapping)
+    df = df.drop(columns=['year'])
+    return df
+
+
+def get_2022_mapping(df):
+    df['year'] = df.index.year
+
+    df['is2022'] = df['year'].apply(
+        lambda x: 1 if x == 2022 else 0
+    )
+
     df = df.drop(columns=['year'])
     return df
