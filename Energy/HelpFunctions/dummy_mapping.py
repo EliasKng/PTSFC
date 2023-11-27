@@ -54,7 +54,7 @@ def get_winter_dummy(df):
     return df
 
 
-def get_consumption_time_mapping(df):
+def get_consumption_time_mapping_3_ways(df):
     df['hour'] = df.index.hour
     time_mapping = {
         'low_consumption_time': list(range(7)),  # differs a lot weekend/weekday
@@ -68,40 +68,7 @@ def get_consumption_time_mapping(df):
 
     return df
 
-
-def get_consumption_time_mapping_2(df):
-    df['hour'] = df.index.hour
-    time_mapping = {
-        'noon_consumption': [9, 10, 11, 12, 13],
-        'after_noon_consumption': [14, 15, 16, 17],
-        'evening_consumption': [18, 19, 20],
-        # 'night_consumption': [21,22,23,0,1,2,3,4,5,6,7,8]
-    }
-    for timeframe, hours in time_mapping.items():
-        df[timeframe] = df['hour'].apply(
-            lambda x: 1 if x in hours else 0)
-    # Drop Low consumption time, because knowledge about the other two accounts for that
-    df = df.drop(columns=['hour'])
-
-    return df
-
-
-def get_consumption_time_mapping_3(df):
-    df['hour'] = df.index.hour
-    time_mapping = {
-        'low_consumption_time': list(range(6)),  # differs a lot weekend/weekday
-        'high_consumption_time': list(range(8, 20)),
-        'transition_time': [6, 7, 20, 21, 22, 23]}
-    for timeframe, hours in time_mapping.items():
-        df[timeframe] = df['hour'].apply(
-            lambda x: 1 if x in hours else 0)
-    # Drop Low consumption time, because knowledge about the other two accounts for that
-    df = df.drop(columns=['hour', 'low_consumption_time'])
-
-    return df
-
-
-def get_consumption_time_mapping_4(df):
+def get_consumption_time_mapping_4_ways(df):
     df['hour'] = df.index.hour
     time_mapping = {
         'low_consumption_time': list(range(6)),  # differs a lot weekend/weekday

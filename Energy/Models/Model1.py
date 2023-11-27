@@ -1,7 +1,7 @@
 import pandas as pd
 import statsmodels.api as sm
 
-from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_consumption_time_mapping, get_day_mapping
+from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_consumption_time_mapping_3_ways, get_day_mapping
 
 
 def model1(energyconsumption):
@@ -60,7 +60,7 @@ def model1(energyconsumption):
 
 def add_dummies(df):
     df = get_winter_dummy(df)
-    df = get_consumption_time_mapping(df)
+    df = get_consumption_time_mapping_3_ways(df)
     df = get_day_mapping(df)
 
     return df
