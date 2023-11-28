@@ -1,3 +1,5 @@
+from datetime import date
+
 import holidays
 import pandas as pd
 import numpy as np
@@ -104,6 +106,36 @@ def get_holiday_dummy(df):
     df['holiday'] = df['timestamp'].apply(
         lambda x: 1 if x in holidays_de else 0)
     df = df.drop(columns=['timestamp'])
+    return df
+
+
+def get_holiday_dummy_advanced(df):
+    """Diese Funktion bezieht jetzt auch noch Brückentage mit ein"""
+    df['timestamp'] = df.index
+
+    # holidays_de = holidays.DE()
+
+    # Create a custom holidays object that includes 31-12 as a holiday
+    years = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+    holidays_de = holidays.Germany(years=years)
+    for y in years:
+        holidays_de.append({date(y, 12, 31): "New Year's Eve"})
+
+    # Mark actual holidays
+    df['holiday'] = df['timestamp'].apply(lambda x: 1 if x in holidays_de else 0)
+
+    # Identify bridge days (Monday)
+    df['bridge_day_monday'] = df['timestamp'].apply(
+        lambda x: 1 if x.weekday() == 0 and (x + pd.DateOffset(days=1)) in holidays_de else 0)
+
+    # Identify bridge days (Friday)
+    df['bridge_day_friday'] = df['timestamp'].apply(
+        lambda x: 1 if x.weekday() == 4 and (x + pd.DateOffset(days=-1)) in holidays_de else 0)
+
+    # Combine actual holidays and bridge days
+    df['holiday'] = df['holiday'] | df['bridge_day_monday'] | df['bridge_day_friday']
+
+    df = df.drop(columns=['timestamp', 'bridge_day_monday', 'bridge_day_friday'])
     return df
 
 
