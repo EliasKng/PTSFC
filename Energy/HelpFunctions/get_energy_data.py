@@ -5,13 +5,19 @@ import requests
 from tqdm import tqdm
 import pandas as pd
 from datetime import datetime
+import warnings
 
 
-def get_energy_data():
+def get_energy_data(force_return = False):
     with open('/Users/elias/Desktop/PTSFC/Energy/current_energy_data.pkl', 'rb') as f:
         energydata = pickle.load(f)
 
     if max(energydata.index) + timedelta(hours=7) < datetime.now():
+        if force_return:
+            warnings.warn("The data is not up to date anymore. Please call fetch_energy_data", UserWarning)
+            return energydata
+
+        print(max(energydata.index))
         raise ValueError("The data is not up to date anymore. Please call fetch_energy_data")
 
     return energydata
