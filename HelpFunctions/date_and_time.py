@@ -14,6 +14,11 @@ def most_recent_thursday(df):
     return most_recent_thursday
 
 
+def next_thursday(df):
+    last_thursday = most_recent_thursday(df)
+    return last_thursday + timedelta(weeks=1)
+
+
 def split_time(df, num_years=0, num_months=0, num_weeks=0, num_days=0, num_hours=0):
     # date_to_keep = df.index.max() - num_years - num_months - num_days
     split_date = df.index.max() - pd.DateOffset(years=num_years, months=num_months, weeks=num_weeks, days=num_days,
