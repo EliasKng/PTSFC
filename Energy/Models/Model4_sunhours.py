@@ -6,7 +6,7 @@ from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_day_mapping
     get_consumption_time_mapping_4_ways, get_sun_hours
 
 
-def model4_sunhours(energyconsumption):
+def model4_sunhours(energyconsumption, offset_horizons=0):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
 
     energyconsumption = add_dummies(energyconsumption)
@@ -51,6 +51,7 @@ def model4_sunhours(energyconsumption):
         energy_forecast[f'q{q}'] = forecast_temp
 
     indexes = [36, 40, 44, 60, 64, 68]
+    indexes = [i + offset_horizons for i in indexes]
 
     forecasting_results = energy_forecast.iloc[indexes,
                           energy_forecast.columns.get_loc('q0.025'):energy_forecast.columns.get_loc('q0.975') + 1]

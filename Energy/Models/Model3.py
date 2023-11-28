@@ -5,7 +5,7 @@ from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_consumption
     get_holiday_dummy
 
 
-def model3(energyconsumption):
+def model3(energyconsumption, offset_horizons=0):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
 
     energyconsumption = add_dummies(energyconsumption)
@@ -48,6 +48,7 @@ def model3(energyconsumption):
         energy_forecast[f'q{q}'] = forecast_temp
 
     indexes = [36, 40, 44, 60, 64, 68]
+    indexes = [i + offset_horizons for i in indexes]
 
     forecasting_results = energy_forecast.iloc[indexes,
                           energy_forecast.columns.get_loc('q0.025'):energy_forecast.columns.get_loc('q0.975') + 1]
