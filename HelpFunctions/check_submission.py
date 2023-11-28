@@ -5,7 +5,7 @@ import warnings
 from datetime import datetime
 
 
-def check_df(df):
+def check_submission_df(df):
     EXPECTED_COLS = ["forecast_date", "target", "horizon", "q0.025", "q0.25",
                      "q0.5", "q0.75", "q0.975"]
     LEN_EXP_COLS = len(EXPECTED_COLS)
