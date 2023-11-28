@@ -16,6 +16,9 @@ def garch11_t(df):
     quantile_df = pd.DataFrame(quantiles, columns=column_names)
     quantile_df['forecast_date'] = dates
     quantile_df['horizon'] = horizon_column
+    quantile_df['target'] = ["DAX" for _ in range(5)]
+    quantile_df = quantile_df[
+        ['forecast_date', 'target', 'horizon', 'q0.025', 'q0.25', 'q0.5', 'q0.75', 'q0.975']]
     return quantile_df
 
 

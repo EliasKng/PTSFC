@@ -14,7 +14,6 @@ def model4_population(energyconsumption):
     y_ec = energyconsumption['energy_consumption']
     X_ec = energyconsumption.drop(columns=['energy_consumption'])
 
-
     # add constant for the intercept term
     X_ec = sm.add_constant(X_ec)
 
@@ -59,6 +58,8 @@ def model4_population(energyconsumption):
     forecasting_results = forecasting_results.rename(columns={"date_time": "forecast_date"})
     forecasting_results['horizon'] = ['36 hour', '40 hour', '44 hour', '60 hour', '64 hour', '68 hour']
     forecasting_results['target'] = ["energy" for _ in range(6)]
+    forecasting_results = forecasting_results[
+        ['forecast_date', 'target', 'horizon', 'q0.025', 'q0.25', 'q0.5', 'q0.75', 'q0.975']]
 
     return forecasting_results
 
