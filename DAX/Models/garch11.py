@@ -29,7 +29,7 @@ def garch11(df):
 def garch11_one_horizon(df, horizon):
     train = df.dropna()
     model = arch_model(train, mean='zero', p=1, q=1)
-    model_fit = model.fit()
+    model_fit = model.fit(disp='off')
     predictions = model_fit.forecast(horizon=horizon)
     return predictions.variance.values[0][-1]
 
