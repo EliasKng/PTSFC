@@ -9,7 +9,6 @@ def mix_models(models, weights, df):
 
     model_forecasts, forecast_dates, horizons = _run_models(models, df)
 
-
     mixed_forecasts = np.zeros(model_forecasts[0].shape)
     for f, w in zip(model_forecasts, weights):
         mixed_forecasts += f * w
@@ -17,6 +16,7 @@ def mix_models(models, weights, df):
     mixed_forecasts['horizon'] = horizons
     mixed_forecasts = mixed_forecasts[['forecast_date', 'horizon', 'q0.025', 'q0.25', 'q0.5', 'q0.75', 'q0.975']]
     return mixed_forecasts
+
 
 # Now weights should contain a list of lists of weights per horizon e.g., for five horizons with two models:
 # [ [ 1, 0.5, 0.5, 0.5, 0.5], [0, 0.5, 0.5, 0.5, 0.5]]
@@ -31,7 +31,6 @@ def mix_models_per_horizon(models, weights, df):
     mixed_forecasts = np.zeros(model_forecasts[0].shape)
     for F, w in zip(model_forecasts, weights):
         mixed_forecasts += F * w[:, np.newaxis]
-        print(F)
     mixed_forecasts['forecast_date'] = forecast_dates
     mixed_forecasts['horizon'] = horizons
     mixed_forecasts = mixed_forecasts[['forecast_date', 'horizon', 'q0.025', 'q0.25', 'q0.5', 'q0.75', 'q0.975']]
