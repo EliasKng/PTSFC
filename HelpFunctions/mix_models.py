@@ -1,13 +1,13 @@
 import numpy as np
 
 
-def mix_models(models, weights, df, target):
+def mix_models(models, weights, df, target, offset_horizons = 0):
     # Check that all weights sum to 1, otherwise normalize them
     total_weight = sum(weights)
     if total_weight != 1:
         weights = [w / total_weight for w in weights]
 
-    model_forecasts, forecast_dates, horizons = _run_models(models, df)
+    model_forecasts, forecast_dates, horizons = _run_models(models, df, offset_horizons)
 
     mixed_forecasts = np.zeros(model_forecasts[0].shape)
     for f, w in zip(model_forecasts, weights):
