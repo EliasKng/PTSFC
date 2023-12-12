@@ -14,9 +14,7 @@ from scipy.stats import t
 from HelpFunctions.date_and_time import next_working_days
 
 
-def arma_garch_11(df):
-    deg_f = 3  # Degrees of freedom for t dist
-
+def arma_garch_11(df, deg_f = 3):
     quantiles = []
 
     for h in range(0, 5):
