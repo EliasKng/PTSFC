@@ -28,7 +28,6 @@ def prepare_data(df):
         raise Exception("DF contains NAs! Please check")
     df = df.rename(columns={"Netzlast_Gesamt": "gesamt"})
     df['gesamt'] = df['gesamt'] / 1000
-    df["weekday"] = df.index.weekday  # Monday=0, Sunday=6
     return df
 
 
