@@ -61,5 +61,5 @@ def fetch_energy_data():
     # resample
     energydata = energydata.resample("1h", label="left").sum()
 
-    with open('current_energy_data.pkl', 'wb') as f:
+    with open('/Users/elias/Desktop/PTSFC/Energy/current_energy_data.pkl', 'wb') as f:
         pickle.dump(energydata, f)
