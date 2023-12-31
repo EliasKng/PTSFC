@@ -7,9 +7,9 @@ import seaborn as sns
 
 # Expected a prepared df (date, gesamt). Calculates the baseline-predictions for the next [36, 40, 44, 60, 64, 68]h
 # Offtest the data by LAST_IDX
-def baseline(df, LAST_IDX=-1):
+def baseline(df, LAST_IDX=-1, offset_horizons=0):
     horizons_def = [36, 40, 44, 60, 64, 68]  # [24 + 12*i for i in range(5)]
-    horizons = [h + 1 for h in horizons_def]
+    horizons = [h + 1 + offset_horizons for h in horizons_def]
     LAST_DATE = df.iloc[LAST_IDX].name
     horizon_date = [get_date_from_horizon(LAST_DATE, h) for h in horizons]
     tau = [.025, .25, .5, .75, .975]
@@ -35,7 +35,6 @@ def baseline(df, LAST_IDX=-1):
         "q0.75": pred_baseline[:, 3],
         "q0.975": pred_baseline[:, 4]})
     return df_sub
-
 
 
 def get_date_from_horizon(last_ts, horizon):

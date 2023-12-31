@@ -14,6 +14,8 @@ def evaluate_horizon(quantiles, y):
 
     if len(quantiles) != 5:
         raise ValueError("The quantiles must consist of five elements.")
+    if y == '':
+        return None
 
     total_sum = 0
 

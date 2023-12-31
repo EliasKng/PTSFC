@@ -1,17 +1,20 @@
 import pandas as pd
 import statsmodels.api as sm
 
-from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_consumption_time_mapping_3_ways, get_day_mapping
+from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_day_mapping, \
+    get_holiday_dummy, get_population, get_day_mapping_detailed, get_hour_mapping, get_2022_mapping, \
+    get_consumption_time_mapping_4_ways, get_sun_hours
 
 
-def model1(energyconsumption):
+def model4_sunhours(energyconsumption, offset_horizons=0):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
 
     energyconsumption = add_dummies(energyconsumption)
 
     y_ec = energyconsumption['energy_consumption']
-    X_ec = energyconsumption.drop(
-        columns=['energy_consumption'])
+    X_ec = energyconsumption.drop(columns=['energy_consumption'])
+
+
     # add constant for the intercept term
     X_ec = sm.add_constant(X_ec)
 
@@ -35,6 +38,8 @@ def model1(energyconsumption):
     quantiles = [0.025, 0.25, 0.5, 0.75, 0.975]
 
     model_qr = sm.QuantReg(y_ec, X_ec)
+    # fit = model_qr.fit(q=0.5)
+    # print(fit.summary())
 
     for q in quantiles:
         model_temp = model_qr.fit(q=q)
@@ -46,6 +51,7 @@ def model1(energyconsumption):
         energy_forecast[f'q{q}'] = forecast_temp
 
     indexes = [36, 40, 44, 60, 64, 68]
+    indexes = [i + offset_horizons for i in indexes]
 
     forecasting_results = energy_forecast.iloc[indexes,
                           energy_forecast.columns.get_loc('q0.025'):energy_forecast.columns.get_loc('q0.975') + 1]
@@ -62,7 +68,10 @@ def model1(energyconsumption):
 
 def add_dummies(df):
     df = get_winter_dummy(df)
-    df = get_consumption_time_mapping_3_ways(df)
+    df = get_consumption_time_mapping_4_ways(df)
     df = get_day_mapping(df)
+    df = get_holiday_dummy(df)
+    df = get_sun_hours(df)
+    # df = get_population(df)
 
     return df
