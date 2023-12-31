@@ -22,18 +22,21 @@ def arma_garch_11_8df(df):
     return arma_garch_11(df, deg_f=8)
 
 
-
 def arma_garch_11_norm(df):
-    return arma_garch_11(df, use_norm= True)
+    return arma_garch_11(df, use_norm=True)
 
 
-def arma_garch_11(df, use_norm = False, deg_f = 8, only_garch = False):
+def garch_11_8df(df):
+    return arma_garch_11(df, deg_f=8, only_garch=True)
+
+
+def arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
     df = df.tail(252)
     quantiles = []
 
     for h in range(0, 5):
         y = df[f'ret{h + 1}'].dropna().to_numpy()
-        forecast, sigma, mu = _arma_garch_11_one_horizon(y, use_norm, deg_f)
+        forecast, sigma, mu = _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch)
         if use_norm:
             quantiles.append(_get_norm_quantiles(sigma[h], mu[h]))
         else:
@@ -83,7 +86,6 @@ def _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch):
                                    mean_model=mean_model,
                                    distribution_model="std",  # "std" -> student t, "norm" -> normal
                                    fixed_pars=params)
-
 
     # In the following, I'm assuming that your timeseries is in a numpy array called "y"
     modelfit = rugarch.ugarchfit(spec=model,
