@@ -9,18 +9,33 @@ import rpy2.robjects.packages as rpackages
 import rpy2.robjects as robjects
 
 import rpy2.robjects.numpy2ri
-from scipy.stats import t
+from scipy.stats import t, norm
 
 from HelpFunctions.date_and_time import next_working_days
 
 
-def arma_garch_11(df, deg_f = 3):
+def arma_garch_11_3df(df):
+    return arma_garch_11(df, deg_f=3)
+
+
+def arma_garch_11_8df(df):
+    return arma_garch_11(df, deg_f=8)
+
+
+def arma_garch_11_norm(df):
+    return arma_garch_11(df, use_norm= True)
+
+
+def arma_garch_11(df, use_norm = False, deg_f = 3):
     quantiles = []
 
     for h in range(0, 5):
         y = df[f'ret{h + 1}'].dropna().to_numpy()
-        forecast, sigma, mu = _arma_garch_11_one_horizon(y, deg_f)
-        quantiles.append(_get_t_quantiles(sigma[h], mu[h], deg_f))
+        forecast, sigma, mu = _arma_garch_11_one_horizon(y, use_norm, deg_f)
+        if use_norm:
+            quantiles.append(_get_norm_quantiles(sigma[h], mu[h]))
+        else:
+            quantiles.append(_get_t_quantiles(sigma[h], mu[h], deg_f))
 
     column_names = [f'q{q}' for q in [0.025, 0.25, 0.5, 0.75, 0.975]]
     dates = next_working_days(max(df.index).date(), 5)
@@ -36,7 +51,7 @@ def arma_garch_11(df, deg_f = 3):
 
 
 # Calculate forecast for one horizon
-def _arma_garch_11_one_horizon(y, deg_f):
+def _arma_garch_11_one_horizon(y, use_norm, deg_f):
     rpy2.robjects.numpy2ri.activate()
 
     rugarch = rpackages.importr('rugarch')
@@ -49,13 +64,20 @@ def _arma_garch_11_one_horizon(y, deg_f):
     mean_model = robjects.ListVector({'armaOrder': robjects.IntVector([1, 1]),
                                       'include.mean': True})
 
-    # defines the DoF for the t-Dist
-    params = robjects.ListVector({'shape': deg_f})
+    if use_norm:
+        model = rugarch.ugarchspec(variance_model=variance_model,
+                                   mean_model=mean_model,
+                                   distribution_model="norm",  # "std" -> student t, "norm" -> normal
+                                   )
+    else:
+        # defines the DoF for the t-Dist
+        params = robjects.ListVector({'shape': deg_f})
 
-    model = rugarch.ugarchspec(variance_model=variance_model,
-                               mean_model=mean_model,
-                               distribution_model="std",  # "std" -> student t, "norm" -> normal
-                               fixed_pars=params)
+        model = rugarch.ugarchspec(variance_model=variance_model,
+                                   mean_model=mean_model,
+                                   distribution_model="std",  # "std" -> student t, "norm" -> normal
+                                   fixed_pars=params)
+
 
     # In the following, I'm assuming that your timeseries is in a numpy array called "y"
     modelfit = rugarch.ugarchfit(spec=model,
@@ -78,3 +100,8 @@ def _arma_garch_11_one_horizon(y, deg_f):
 def _get_t_quantiles(sigma, mu, df_t):
     t_quantiles = t.ppf([0.025, 0.25, 0.5, 0.75, 0.975], df=df_t, loc=mu, scale=sigma)
     return t_quantiles
+
+
+def _get_norm_quantiles(sigma, mu):
+    norm_quantiles = norm.ppf([0.025, 0.25, 0.5, 0.75, 0.975], loc=mu, scale=sigma)
+    return norm_quantiles
