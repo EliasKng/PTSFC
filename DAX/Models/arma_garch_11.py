@@ -30,6 +30,10 @@ def garch_11_8df(df):
     return arma_garch_11(df, deg_f=8, only_garch=True)
 
 
+def garch_11_norm(df):
+    return arma_garch_11(df, use_norm=True, only_garch=True)
+
+
 def arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
     df = df.tail(252)
     quantiles = []
