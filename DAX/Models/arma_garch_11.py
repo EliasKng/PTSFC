@@ -14,27 +14,23 @@ from scipy.stats import t, norm
 from HelpFunctions.date_and_time import next_working_days
 
 
-def arma_garch_11_3df(df):
-    return arma_garch_11(df, deg_f=3)
-
-
 def arma_garch_11_8df(df):
-    return arma_garch_11(df, deg_f=8)
+    return _arma_garch_11(df, deg_f=8)
 
 
 def arma_garch_11_norm(df):
-    return arma_garch_11(df, use_norm=True)
+    return _arma_garch_11(df, use_norm=True)
 
 
 def garch_11_8df(df):
-    return arma_garch_11(df, deg_f=8, only_garch=True)
+    return _arma_garch_11(df, deg_f=8, only_garch=True)
 
 
 def garch_11_norm(df):
-    return arma_garch_11(df, use_norm=True, only_garch=True)
+    return _arma_garch_11(df, use_norm=True, only_garch=True)
 
 
-def arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
+def _arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
     df = df.tail(252)
     quantiles = []
 
