@@ -36,16 +36,21 @@ x_vals <- density_log_returns$x
 normal_density <- dnorm(x_vals, mean = mean(log_returns), sd = sd(log_returns))
 
 # Generate values for the t-distribution with 6 degrees of freedom
-t_density <- dt(x_vals, df = 6)
+t_density3 <- dt(x_vals, df = 3)
+t_density8 <- dt(x_vals, df = 8)
 
 # Create the base density plot using ggplot2
 p <- ggplot() +
-  geom_line(aes(x = density_log_returns$x, y = density_log_returns$y), color = 'blue') +
-  geom_line(aes(x = x_vals, y = normal_density), color = 'red', linetype = "dashed") +
-  geom_line(aes(x = x_vals, y = t_density), color = 'green', linetype = "dotted") +
+  geom_line(aes(x = density_log_returns$x, y = density_log_returns$y, color = 'DAX Log Returns'), size = 0.75) +
+  geom_line(aes(x = x_vals, y = normal_density, color = 'Normal Distribution'), linetype = "dashed", size = 0.75) +
+  geom_line(aes(x = x_vals, y = t_density3, color = 't-Distribution (df=3)'), linetype = "dashed", size = 0.75) +
+  geom_line(aes(x = x_vals, y = t_density8, color = 't-Distribution (df=8)'), linetype = "dashed", size = 0.75) +
   labs(x = 'Log Returns', y = 'Density',
        title = 'Density of Log Returns with Normal and t Distributions') +
-  theme_minimal()
+  theme_minimal() + 
+  scale_color_manual(values = c('DAX Log Returns' = 'blue', 'Normal Distribution' = 'red', 't-Distribution (df=3)' = 'green', 't-Distribution (df=8)' = 'brown')) +
+  coord_cartesian(xlim = c(-5, 5)) +
+  theme(legend.position="top")
 
 # Print the plot
 print(p)
