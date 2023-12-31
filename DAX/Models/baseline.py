@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 from datetime import timedelta, datetime
 import seaborn as sns
 
+def baseline_1y(df):
+    df = df.tail(252)
+    return baseline(df)
+
 
 def baseline(df):
     # quantile levels
