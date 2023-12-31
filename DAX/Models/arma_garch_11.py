@@ -22,11 +22,13 @@ def arma_garch_11_8df(df):
     return arma_garch_11(df, deg_f=8)
 
 
+
 def arma_garch_11_norm(df):
     return arma_garch_11(df, use_norm= True)
 
 
-def arma_garch_11(df, use_norm = False, deg_f = 3):
+def arma_garch_11(df, use_norm = False, deg_f = 8, only_garch = False):
+    df = df.tail(252)
     quantiles = []
 
     for h in range(0, 5):
@@ -51,7 +53,7 @@ def arma_garch_11(df, use_norm = False, deg_f = 3):
 
 
 # Calculate forecast for one horizon
-def _arma_garch_11_one_horizon(y, use_norm, deg_f):
+def _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch):
     rpy2.robjects.numpy2ri.activate()
 
     rugarch = rpackages.importr('rugarch')
@@ -60,10 +62,14 @@ def _arma_garch_11_one_horizon(y, use_norm, deg_f):
     variance_model = robjects.ListVector({'model': "sGARCH",
                                           'garchOrder': robjects.IntVector([1, 1])})
 
-    # ARMA(1,1)
-    mean_model = robjects.ListVector({'armaOrder': robjects.IntVector([1, 1]),
-                                      'include.mean': True})
-
+    if only_garch:
+        # ARMA(1,1)
+        mean_model = robjects.ListVector({'armaOrder': robjects.IntVector([0, 0]),
+                                          'include.mean': False})
+    else:
+        # ARMA(1,1)
+        mean_model = robjects.ListVector({'armaOrder': robjects.IntVector([1, 1]),
+                                          'include.mean': True})
     if use_norm:
         model = rugarch.ugarchspec(variance_model=variance_model,
                                    mean_model=mean_model,
