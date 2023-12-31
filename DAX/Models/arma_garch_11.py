@@ -30,8 +30,22 @@ def garch_11_norm(df):
     return _arma_garch_11(df, use_norm=True, only_garch=True)
 
 
-def _arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
+def garch11_norm_1y(df):
     df = df.tail(252)
+    return _arma_garch_11(df, use_norm=True, only_garch=True)
+
+
+def garch11_norm_2y(df):
+    df = df.tail(2 * 252)
+    return _arma_garch_11(df, use_norm=True, only_garch=True)
+
+
+def garch11_norm_5y(df):
+    df = df.tail(5 * 252)
+    return _arma_garch_11(df, use_norm=True, only_garch=True)
+
+
+def _arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
     quantiles = []
 
     for h in range(0, 5):
