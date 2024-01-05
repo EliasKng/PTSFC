@@ -15,7 +15,8 @@ def baseline(df, LAST_IDX=-1, offset_horizons=0):
     tau = [.025, .25, .5, .75, .975]
     pred_baseline = np.zeros((6, 5))
     last_t = 100
-    df["weekday"] = df.index.weekday  # Monday=0, Sunday=6
+    pd.options.mode.chained_assignment = None  # default='warn'
+    df.loc[:,"weekday"] = df.index.weekday  # Monday=0, Sunday=6
     for i, d in enumerate(horizon_date):
         weekday = d.weekday()
         hour = d.hour
