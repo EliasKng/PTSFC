@@ -34,7 +34,5 @@ def mstl(df, offset_horizons=0):
     forecasting_results = forecasting_results[
         ['forecast_date', 'target', 'horizon', 'q0.025', 'q0.25', 'q0.5', 'q0.75', 'q0.975']]
 
-    print(forecasting_results)
-
-    return None
+    return forecasting_results
 
