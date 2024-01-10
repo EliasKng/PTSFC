@@ -149,7 +149,8 @@ def get_population(df):
         2020: 83.155,
         2021: 83.237,
         2022: 84.359,
-        2023: 84.581
+        2023: 84.61,
+        2024: 84.61
     }
     df['population'] = df['year'].map(population_mapping)
     df = df.drop(columns=['year'])
