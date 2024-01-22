@@ -1,5 +1,11 @@
 import numpy as np
 
+def mix_models_energy(models, weights, df, offset_horizons = 0):
+    return mix_models(models, weights, df, 'energy', offset_horizons)
+
+def mix_models_dax(models, weights, df, offset_horizons = 0):
+    return mix_models(models, weights, df, 'dax', offset_horizons)
+
 
 def mix_models(models, weights, df, target, offset_horizons = 0):
     # Check that all weights sum to 1, otherwise normalize them
