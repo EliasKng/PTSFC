@@ -5,11 +5,26 @@ from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_day_mapping
     get_holiday_dummy, get_population, get_day_mapping_detailed, get_hour_mapping, get_2022_mapping, \
     get_consumption_time_mapping_4_ways, get_holiday_dummy_advanced, get_sun_hours
 
-
 def model5(energyconsumption, offset_horizons=0):
+    return _model5(energyconsumption, offset_horizons)
+
+def model5_drop_1(energyconsumption, offset_horizons=0):
+    return _model5(energyconsumption, drop_columns=['transition_time'], offset_horizons=offset_horizons)
+
+def model5_drop_2(energyconsumption, offset_horizons=0):
+    return _model5(energyconsumption, drop_columns=['transition_time','population'], offset_horizons=offset_horizons)
+
+def model5_drop_3(energyconsumption, offset_horizons=0):
+    return _model5(energyconsumption, drop_columns=['transition_time','population','holiday'], offset_horizons=offset_horizons)
+
+
+def _model5(energyconsumption, drop_columns=None, offset_horizons=0):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
 
     energyconsumption = add_dummies(energyconsumption)
+
+    if drop_columns is not None:
+        energyconsumption = energyconsumption.drop(columns=drop_columns)
 
     y_ec = energyconsumption['energy_consumption']
     X_ec = energyconsumption.drop(columns=['energy_consumption'])
