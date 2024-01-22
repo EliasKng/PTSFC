@@ -22,7 +22,6 @@ def _model5(energyconsumption, drop_columns=None, offset_horizons=0):
     energyconsumption = energyconsumption.rename(columns={"gesamt": "energy_consumption"})
 
     energyconsumption = add_dummies(energyconsumption)
-
     if drop_columns is not None:
         energyconsumption = energyconsumption.drop(columns=drop_columns)
 
@@ -43,7 +42,10 @@ def _model5(energyconsumption, drop_columns=None, offset_horizons=0):
     energy_forecast = pd.DataFrame({'date_time': horizon})
     energy_forecast.set_index('date_time', inplace=True)
 
+
     energy_forecast = add_dummies(energy_forecast)
+    if drop_columns is not None:
+        energy_forecast = energy_forecast.drop(columns=drop_columns)
 
     # Point forecasts
     X_fc = energy_forecast
