@@ -6,7 +6,7 @@ from Energy.HelpFunctions.dummy_mapping import get_winter_dummy, get_day_mapping
     get_consumption_time_mapping_4_ways, get_holiday_dummy_advanced, get_sun_hours
 
 def model5(energyconsumption, offset_horizons=0):
-    return _model5(energyconsumption, offset_horizons)
+    return _model5(energyconsumption, offset_horizons=offset_horizons)
 
 def model5_drop_1(energyconsumption, offset_horizons=0):
     return _model5(energyconsumption, drop_columns=['transition_time'], offset_horizons=offset_horizons)
