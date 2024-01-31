@@ -24,7 +24,6 @@ def _model5(energyconsumption, drop_columns=None, offset_horizons=0):
     energyconsumption = add_dummies(energyconsumption)
     if drop_columns is not None:
         energyconsumption = energyconsumption.drop(columns=drop_columns)
-
     y_ec = energyconsumption['energy_consumption']
     X_ec = energyconsumption.drop(columns=['energy_consumption'])
 
