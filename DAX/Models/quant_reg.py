@@ -42,7 +42,6 @@ def quant_reg(df, rolling_vol_days = 3):
     forecasts = pd.concat(forecasts)
 
     forecasts['horizon'] = [str(i) + " day" for i in (1, 2, 5, 6, 7)]
-    print(forecasts)
     return forecasts
 
 
