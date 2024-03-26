@@ -15,42 +15,52 @@ from HelpFunctions.date_and_time import next_working_days
 
 
 def arma_garch_11_8df(df):
-    return _arma_garch_11(df, deg_f=8)
+    return _arma_garch(df, deg_f=8)
 
 
 def arma_garch_11_norm(df):
-    return _arma_garch_11(df, use_norm=True)
+    return _arma_garch(df, use_norm=True)
+
+
+def arma_11_garch_31_norm_1y(df):
+    df = df.tail(252)
+    return _arma_garch(df, use_norm=True, p_garch=3, q_garch=1)
 
 
 def garch_11_8df(df):
-    return _arma_garch_11(df, deg_f=8, only_garch=True)
+    return _arma_garch(df, deg_f=8, only_garch=True)
 
 
 def garch_11_norm(df):
-    return _arma_garch_11(df, use_norm=True, only_garch=True)
+    return _arma_garch(df, use_norm=True, only_garch=True)
 
 
 def garch11_norm_1y(df):
     df = df.tail(252)
-    return _arma_garch_11(df, use_norm=True, only_garch=True)
+    return _arma_garch(df, use_norm=True, only_garch=True)
+
+
+def garch31_norm_1y(df):
+    df = df.tail(252)
+    return _arma_garch(df, use_norm=True, only_garch=True, p_garch=3, q_garch=1)
 
 
 def garch11_norm_2y(df):
     df = df.tail(2 * 252)
-    return _arma_garch_11(df, use_norm=True, only_garch=True)
+    return _arma_garch(df, use_norm=True, only_garch=True)
 
 
 def garch11_norm_5y(df):
     df = df.tail(5 * 252)
-    return _arma_garch_11(df, use_norm=True, only_garch=True)
+    return _arma_garch(df, use_norm=True, only_garch=True)
 
 
-def _arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
+def _arma_garch(df, use_norm=False, deg_f=8, only_garch=False, p_garch=1, q_garch=1):
     quantiles = []
 
     for h in range(0, 5):
         y = df[f'ret{h + 1}'].dropna().to_numpy()
-        forecast, sigma, mu = _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch)
+        forecast, sigma, mu = _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch, p_garch, q_garch)
         if use_norm:
             quantiles.append(_get_norm_quantiles(sigma[h], mu[h]))
         else:
@@ -70,14 +80,14 @@ def _arma_garch_11(df, use_norm=False, deg_f=8, only_garch=False):
 
 
 # Calculate forecast for one horizon
-def _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch):
+def _arma_garch_11_one_horizon(y, use_norm, deg_f, only_garch, p_garch, q_garch):
     rpy2.robjects.numpy2ri.activate()
 
     rugarch = rpackages.importr('rugarch')
 
     # GARCH(1,1)
     variance_model = robjects.ListVector({'model': "sGARCH",
-                                          'garchOrder': robjects.IntVector([1, 1])})
+                                          'garchOrder': robjects.IntVector([p_garch, q_garch])})
 
     if only_garch:
         # ARMA(1,1)
